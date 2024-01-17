@@ -4,7 +4,17 @@ from peft import PeftModel, PeftConfig
 
 st.set_page_config(page_title="My Llama2 Chatbot")
 
-st.title("My Llama2 Chatbot")
+# 세션 상태에 대화 이력을 저장할 리스트 초기화
+if "messages" not in st.session_state:
+    st.session_state.messages = []
+
+# Streamlit 앱의 타이틀 설정
+st.title(":koala: Coala Chatbot")
+st.title(':blue_book: 파이썬 코드를 알려드릴게요.')
+
+# 사이드바
+st.sidebar.title("질문 이력 :book:") #제목 추가
+st.sidebar.write("---")
 
 # Use st.cache_resource for caching the model as it's a global resource
 @st.cache_resource
@@ -51,7 +61,7 @@ def gen(x):
             return_tensors='pt',
             return_token_type_ids=False
         ), 
-        max_new_tokens=400,
+        max_new_tokens=200,
         early_stopping=True,
         do_sample=False,
     )
@@ -64,7 +74,10 @@ user_input = st.chat_input("질문을 입력하세요:")
 if user_input:
     with st.spinner("Generating response..."):
         response = gen(user_input)
+        st.session_state.messages.append({"role": "user", "content": user_input})
+        st.session_state.messages.append({"role": "chatbot", "content": response})
 
-        # 챗봇의 응답 메시지 생성
-        with st.chat_message("Llama2 Chatbot", avatar="🤖"):
-            st.write(response)
+# 대화 이력 표시
+for message in st.session_state.messages:
+    with st.chat_message(message["role"], avatar="🤖" if message["role"] == "chatbot" else None):
+        st.write(message["content"])
