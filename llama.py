@@ -2,11 +2,11 @@ import streamlit as st
 from transformers import AutoTokenizer, AutoModelForCausalLM
 from peft import PeftModel, PeftConfig
 
-st.set_page_config(page_title="My Llama2 Chatbot")
-
 # 세션 상태에 대화 이력을 저장할 리스트 초기화
 if "messages" not in st.session_state:
     st.session_state.messages = []
+
+st.set_page_config(page_title="My Llama2 Chatbot")
 
 # Streamlit 앱의 타이틀 설정
 st.title(":koala: Coala Chatbot")
